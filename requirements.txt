@@ -1,3 +1,4 @@
 pyscreenshot==0.4.2
 Pillow==5.3.0
 pytesseract==0.2.5
+pynput==1.4
