@@ -1,16 +1,18 @@
 import pyscreenshot as ig
 import pytesseract as pt
-from PIL import Image
-import tkinter as tk
 import time
 import sys
+import pyautogui
+from pynput import keyboard
 
-root = tk.Tk()
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
+def mouseDown(e):
+    print('Exiting')
+    return False
 
 
 def main(argv):
+    WIDTH, HEIGHT = pyautogui.size()
+
     IN_FILE = 'out.txt'
     if len(argv) > 0:
         IN_FILE = argv[0]
@@ -22,15 +24,27 @@ def main(argv):
         x2 = int(x2)
         y2 = int(y2)
 
-    while True:
+    listener = keyboard.Listener(on_press=mouseDown)
+    listener.start()
+
+    timeout = 45
+    while listener.is_alive():
         screen = ig.grab(bbox=(x1, y1, x2, y2))
         screen_text = pt.image_to_string(screen)
         print(screen_text)
         if 'Fishing Bobber splashes' in screen_text or 'Fishing Gobber splashes' in screen_text or 'Fickhina Bokhher splashes' in screen_text:
-            print('nice!')
-        else:
-            print('no!')
+            pyautogui.click(WIDTH/2, HEIGHT/2)
+            timeout = 45
+        if timeout <= 0:
+            timeout = 45
+            pyautogui.click(WIDTH/2, HEIGHT/2)
+            time.sleep(0.25)
+            pyautogui.click(WIDTH/2, HEIGHT/2)
+
         time.sleep(1)
+        timeout -= 1
+    
+    listener.join()
 
 
 if __name__ == '__main__':
