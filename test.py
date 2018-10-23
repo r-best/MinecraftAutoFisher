@@ -6,9 +6,10 @@ import pyautogui
 from pynput.keyboard import Key, Listener
 
 def mouseDown(e):
-    if e == Key.esc:
-        print('Exiting')
-        return False
+    # if e == Key.esc:
+    #     print('Exiting')
+    #     return False
+    return True
 
 
 def main(argv):
@@ -34,19 +35,18 @@ def main(argv):
         screen = ig.grab(bbox=(x1, y1, x2, y2))
         screen_text = pt.image_to_string(screen)
         print(screen_text)
-        if 'Fishing Bobber splashes' in screen_text or 'Fishing Gobber splashes' in screen_text or 'Fickhina Bokhher splashes' in screen_text:
+        if 'Fishing' in screen_text or 'Bobber' in screen_text or 'Gobber' in screen_text:
             # Fish detected, clicking to reel it in & resetting timer
-            pyautogui.click(WIDTH/2, HEIGHT/2)
-            timeout = 45
+            pyautogui.click()
+            cast_time = time.monotonic()
         if time.monotonic() - cast_time > timeout:
             # Timer has expired, must have missed the fish
-            pyautogui.click(WIDTH/2, HEIGHT/2)
+            pyautogui.click()
             time.sleep(0.25)
-            pyautogui.click(WIDTH/2, HEIGHT/2)
-            timeout = 45
+            pyautogui.click()
+            cast_time = time.monotonic()
 
-        time.sleep(1)
-        timeout -= 1
+        time.sleep(0.25)
 
     listener.join()
 
