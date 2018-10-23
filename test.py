@@ -3,11 +3,12 @@ import pytesseract as pt
 import time
 import sys
 import pyautogui
-from pynput import keyboard
+from pynput.keyboard import Key, Listener
 
 def mouseDown(e):
-    print('Exiting')
-    return False
+    if e == Key.esc:
+        print('Exiting')
+        return False
 
 
 def main(argv):
@@ -24,7 +25,7 @@ def main(argv):
         x2 = int(x2)
         y2 = int(y2)
 
-    listener = keyboard.Listener(on_press=mouseDown)
+    listener = Listener(on_press=mouseDown)
     listener.start()
 
     timeout = 45 # Fish always appears within 45 seconds, if we wait longer than this then recast the line
