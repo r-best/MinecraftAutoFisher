@@ -99,17 +99,21 @@ def quit(rect, outfile):
         outfile:
             Name of the JSON file to write results to
     """
-    with open(outfile, 'r+') as fp:
-        data = json.load(fp)
-        data['screengrab_coords'] = rect.coords()
-        fp.seek(0)
-        json.dump(data, fp, indent=4, sort_keys=True)
-        fp.truncate()
+    with open(outfile, 'w+') as fp:
+        try:
+            data = json.load(fp)
+        except json.decoder.JSONDecodeError:
+            data = dict()
+        finally:
+            data['screengrab_coords'] = rect.coords()
+            fp.seek(0)
+            json.dump(data, fp, indent=4, sort_keys=True)
+            fp.truncate()
     exit()
 
 
 def main(argv):
-    CONFIG_FILE = "config.json"
+    CONFIG_FILE = "../config.json"
 
     # Set up Tkinter window
     root = tk.Tk()
