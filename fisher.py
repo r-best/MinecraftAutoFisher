@@ -6,10 +6,10 @@ from pynput.keyboard import Key, Listener
 from pynput.mouse import Button, Controller
 
 
-def mouseDown(e):
-    # if e == Key.esc:
-    #     print('Exiting')
-    #     return False
+def keyDown(e):
+    if e == Key.esc:
+        print('Exiting')
+        return False
     return True
 
 
@@ -26,7 +26,7 @@ def main(argv):
         y2 = int(y2)
 
     mouse = Controller()
-    listener = Listener(on_press=mouseDown)
+    listener = Listener(on_press=keyDown)
     listener.start()
 
     timeout = 45 # Fish always appears within 45 seconds, if we wait longer than this then recast the line
