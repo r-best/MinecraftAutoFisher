@@ -1,29 +1,25 @@
+import sys
+import time
+import json
 import pyscreenshot as ig
 import pytesseract as pt
-import time
-import sys
 from pynput.keyboard import Key, Listener
 from pynput.mouse import Button, Controller
 
 
 def keyDown(e):
-    if e == Key.esc:
+    if e == Key.enter:
         print('Exiting')
         return False
     return True
 
 
 def main(argv):
-    IN_FILE = 'out.txt'
-    if len(argv) > 0:
-        IN_FILE = argv[0]
-    
-    with open(IN_FILE, 'r') as fp:
-        x1, y1, x2, y2 = fp.read().split()
-        x1 = int(x1)
-        y1 = int(y1)
-        x2 = int(x2)
-        y2 = int(y2)
+    CONFIG_FILE = "config.json"
+
+    with open(CONFIG_FILE, 'r') as fp:
+        data = json.load(fp)
+        x1, y1, x2, y2 = data['screengrab_coords']
 
     mouse = Controller()
     listener = Listener(on_press=keyDown)

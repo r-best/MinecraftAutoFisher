@@ -6,7 +6,9 @@ as coordinates in a text file. Default file is `out.txt` but
 a different name can be passed in on the command line.
 """
 import sys
+import json
 import tkinter as tk
+
 
 class Rect():
     """Class representing a rectangle on a Tkinter Canvas.
@@ -87,26 +89,27 @@ def mouseMove(e, rect):
 
 
 def quit(rect, outfile):
-    """Writes the final coordinates of the bounding box
-    to the given file and closes the program.
+    """Updates the given JSON output file with the
+    final coordinates of the bounding box and
+    exits the program
 
     Arguments:
         rect: Rect
             The bounding box in use
         outfile:
-            Name of file to write results to
+            Name of the JSON file to write results to
     """
-    x1, y1, x2, y2 = rect.coords()
-    with open(outfile, 'w') as fp:
-        fp.write("{} {} {} {}".format(x1, y1, x2, y2))
+    with open(outfile, 'r+') as fp:
+        data = json.load(fp)
+        data['screengrab_coords'] = rect.coords()
+        fp.seek(0)
+        json.dump(data, fp, indent=4, sort_keys=True)
+        fp.truncate()
     exit()
 
 
 def main(argv):
-    OUTPUT_FILE = 'out.txt'
-
-    if len(argv) > 0:
-        OUTPUT_FILE = argv[0]
+    CONFIG_FILE = "config.json"
 
     # Set up Tkinter window
     root = tk.Tk()
@@ -122,8 +125,8 @@ def main(argv):
     # Set event bindings and start Tkinter main loop
     root.bind("<ButtonPress-1>", lambda e: mouseDown(e, rect))
     root.bind("<B1-Motion>", lambda e: mouseMove(e, rect))
-    root.bind("<ButtonRelease-1>", lambda e: quit(rect, OUTPUT_FILE))
-    root.bind("<Return>", lambda e: quit(rect, OUTPUT_FILE))
+    root.bind("<ButtonRelease-1>", lambda e: quit(rect, CONFIG_FILE))
+    root.bind("<Return>", lambda e: quit(rect, CONFIG_FILE))
     root.bind("<Escape>", lambda e: e.widget.destroy())
     root.mainloop()
     
