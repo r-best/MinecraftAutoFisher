@@ -5,6 +5,7 @@ import pyscreenshot as ig
 import pytesseract as pt
 from pynput.keyboard import Key, Listener
 from pynput.mouse import Button, Controller
+from Levenshtein import distance as levenshtein
 
 
 def keyDown(e):
@@ -14,8 +15,19 @@ def keyDown(e):
     return True
 
 
+def match(screenText, targetText="Fishing Bobber", threshold=5):
+    ngram_size = len(targetText.split())
+    for line in screenText.splitlines():
+        line = line.split()
+        for i in range(len(line)-ngram_size+1):
+            ngram = " ".join(line[i:i+ngram_size])
+            if levenshtein(ngram, targetText) < threshold:
+                return True
+    return False
+
+
 def main(argv):
-    CONFIG_FILE = "config.json"
+    CONFIG_FILE = "../config.json"
 
     with open(CONFIG_FILE, 'r') as fp:
         data = json.load(fp)
@@ -31,11 +43,8 @@ def main(argv):
         screen = ig.grab(bbox=(x1, y1, x2, y2))
         screen_text = pt.image_to_string(screen)
         print(screen_text)
-        if 'Fishing Bobber' in screen_text or 'Fishing Gobber' in screen_text or time.monotonic() - cast_time > timeout:
-            # Timer has expired, must have missed the fish
-            mouse.click(Button.right)
-            time.sleep(0.25)
-            mouse.click(Button.right)
+        if match(screen_text, 'Fishing Bobber') or time.monotonic() - cast_time > timeout:
+            mouse.click(Button.right, 2)
             cast_time = time.monotonic()
 
         time.sleep(0.25)
