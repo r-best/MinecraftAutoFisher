@@ -8,59 +8,10 @@ a different name can be passed in on the command line.
 import sys
 import json
 import tkinter as tk
+from utils import Rect
 
 
-class Rect():
-    """Class representing a rectangle on a Tkinter Canvas.
-    More easily exposes the coordinates for viewing & shifting.
-    """
-    def __init__(self, canvas, x1, y1, x2, y2, **kwargs):
-        self.canvas = canvas
-        self.widget = canvas.create_rectangle(x1, y1, x2, y2, kwargs)
-        self.move(x1, y1, x2, y2)
-
-    def move(self, x1, y1, x2, y2):
-        """Moves the Rect to the given coordinates
-
-        Arguments:
-            x1, y1: numbers
-                The destination coordinates of the upper left corner of the Rect
-            x2, y2: numbers
-                The destination coordinates of the lower right corner of the Rect
-        
-        Returns:
-            None
-        """
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-        self.canvas.coords(self.widget, x1, y1, x2, y2)
-
-    def origin(self):
-        """Returns the coordinates of the upper left corner of the Rect
-
-        Returns:
-            x1: number
-                The x-coordinate of the upper left corner of the Rect
-            y1: number
-                The y-coordinate of the upper left corner of the Rect
-        """
-        return self.x1, self.y1
-
-    def coords(self):
-        """Returns the Rect coordinates
-
-        Returns:
-            x1, y1: numbers
-                The coordinates of the upper left corner of the Rect
-            x2, y2: numbers
-                The coordinates of the lower right corner of the Rect
-        """
-        return self.x1, self.y1, self.x2, self.y2
-
-
-def mouseDown(e, rect):
+def _mouseDown(e, rect):
     """Event callback for Tkinter <ButtonPress-1>. Resets
     the position of the bounding box.
 
@@ -73,7 +24,7 @@ def mouseDown(e, rect):
     rect.move(e.x_root, e.y_root, e.x_root, e.y_root)
 
 
-def mouseMove(e, rect):
+def _mouseMove(e, rect):
     """Event callback for Tkinter <B1-Motion>. Shifts the
     coordinates of the bounding box to match the current mouse
     position.
@@ -127,8 +78,8 @@ def main(argv):
     rect = Rect(c, 0, 0, 0, 0, fill="blue")
 
     # Set event bindings and start Tkinter main loop
-    root.bind("<ButtonPress-1>", lambda e: mouseDown(e, rect))
-    root.bind("<B1-Motion>", lambda e: mouseMove(e, rect))
+    root.bind("<ButtonPress-1>", lambda e: _mouseDown(e, rect))
+    root.bind("<B1-Motion>", lambda e: _mouseMove(e, rect))
     root.bind("<ButtonRelease-1>", lambda e: quit(rect, CONFIG_FILE))
     root.bind("<Return>", lambda e: quit(rect, CONFIG_FILE))
     root.bind("<Escape>", lambda e: e.widget.destroy())
