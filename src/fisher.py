@@ -9,6 +9,9 @@ from Levenshtein import distance as levenshtein
 
 
 def keyDown(e):
+    """Callback for keyboard listener, closes
+    the listener if the Enter key is pressed
+    """
     if e == Key.enter:
         print('Exiting')
         return False
@@ -16,6 +19,32 @@ def keyDown(e):
 
 
 def match(screenText, targetText="Fishing Bobber", threshold=5):
+    """Takes in some text and iterates through it line by line,
+    checking to see if any of the lines contain something similar
+    to the target text using Levenshtein distance
+
+    Arguments:
+        screenText: string
+            The text to search for a match in
+        targetText: string="Fishing Bobber"
+            The text to search for
+        threshold: int=5
+            The maximum acceptable Levenshtein distance to
+            be considered a match
+    
+    Returns:
+        True if a match was found, False otherwise
+    
+    Examples:
+        >>> match("Fishing Bobber")
+        True
+        >>> match("Fishing Gobber")
+        True
+        >>> match("Fishing")
+        False 
+        >>> match("Some text Fishing Bobber some more text")
+        True
+    """
     ngram_size = len(targetText.split())
     for line in screenText.splitlines():
         line = line.split()
@@ -40,13 +69,13 @@ def main(argv):
     timeout = 45 # Fish always appears within 45 seconds, if we wait longer than this then recast the line
     cast_time = time.monotonic()
     while listener.is_alive():
+        # Grab portion of screen defined in config file & send it to tesseract
         screen = ig.grab(bbox=(x1, y1, x2, y2))
         screen_text = pt.image_to_string(screen)
-        print(screen_text)
         if match(screen_text, 'Fishing Bobber') or time.monotonic() - cast_time > timeout:
+            # Either fish was found or timeout was exceeded, reel in the line and cast it again
             mouse.click(Button.right, 2)
             cast_time = time.monotonic()
-
         time.sleep(0.25)
 
     listener.join()
