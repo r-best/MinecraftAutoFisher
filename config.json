@@ -1,4 +1,5 @@
 {
+    "tesseract_path": "\\usr\\bin\\tesseract",
     "screengrab_coords": [
         359,
         267,

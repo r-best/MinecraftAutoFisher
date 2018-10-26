@@ -62,6 +62,7 @@ def main(argv):
 
     with open(CONFIG_FILE, 'r') as fp:
         data = json.load(fp)
+        pt.pytesseract.tesseract_path = data['tesseract_path']
         x1, y1, x2, y2 = data['screengrab_coords']
 
     mouse = Controller()
