@@ -3,11 +3,14 @@ from setuptools import setup, find_packages
 with open('requirements.txt', 'r') as fp:
     reqs = [x.strip() for x in fp.readlines()]
 
+with open('README.md', 'r') as fp:
+    readme = fp.read()
+
 setup(
     name='Minecraft AutoFisher',
     version='0.1',
     description='',
-    long_description='',
+    long_description=readme,
     classifiers=[
       'Programming Language :: Python :: 3.6'
     ],
