@@ -5,7 +5,7 @@ import pyscreenshot as ig
 import pytesseract as pt
 from pynput.keyboard import Key, Listener
 from pynput.mouse import Button, Controller
-from Levenshtein import distance as levenshtein
+from Levenshtein._levenshtein import distance as levenshtein
 
 
 def keyDown(e):
