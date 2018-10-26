@@ -8,7 +8,7 @@ from pynput.mouse import Button, Controller
 from Levenshtein._levenshtein import distance as levenshtein
 
 
-def keyDown(e):
+def _keyDown(e):
     """Callback for keyboard listener, closes
     the listener if the Enter key is pressed
     """
@@ -56,14 +56,16 @@ def match(screenText, targetText="Fishing Bobber", threshold=5):
 
 
 def main(argv):
-    CONFIG_FILE = "../config.json"
+    CONFIG_FILE = "config.json"
+    if len(argv) > 0:
+        CONFIG_FILE = argv[0]
 
     with open(CONFIG_FILE, 'r') as fp:
         data = json.load(fp)
         x1, y1, x2, y2 = data['screengrab_coords']
 
     mouse = Controller()
-    listener = Listener(on_press=keyDown)
+    listener = Listener(on_press=_keyDown)
     listener.start()
 
     timeout = 45 # Fish always appears within 45 seconds, if we wait longer than this then recast the line
@@ -72,6 +74,7 @@ def main(argv):
         # Grab portion of screen defined in config file & send it to tesseract
         screen = ig.grab(bbox=(x1, y1, x2, y2))
         screen_text = pt.image_to_string(screen)
+        print(screen_text)
         if match(screen_text, 'Fishing Bobber') or time.monotonic() - cast_time > timeout:
             # Either fish was found or timeout was exceeded, reel in the line and cast it again
             mouse.click(Button.right, 2)
