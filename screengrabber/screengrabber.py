@@ -8,23 +8,9 @@ a different name can be passed in on the command line.
 import sys
 import json
 import tkinter as tk
-from utils import Rect
 
 
-def _mouseDown(e, rect):
-    """Event callback for Tkinter <ButtonPress-1>. Resets
-    the position of the bounding box.
-
-    Arguments:
-        e: Tkinter Event
-            The event that triggered this callback
-        rect: Rect
-            The bounding box in use
-    """
-    rect.move(e.x_root, e.y_root, e.x_root, e.y_root)
-
-
-def _mouseMove(e, rect):
+def _mouseMove(c, rect, x, y):
     """Event callback for Tkinter <B1-Motion>. Shifts the
     coordinates of the bounding box to match the current mouse
     position.
@@ -35,37 +21,11 @@ def _mouseMove(e, rect):
         rect: Rect
             The bounding box in use
     """
-    x1, y1 = rect.origin()
-    rect.move(x1, y1, e.x_root, e.y_root)
+    x1, y1, _, _ = c.coords(rect)
+    c.coords(rect, x1, y1, x, y)
 
 
-def quit(rect, outfile):
-    """Updates the given JSON output file with the
-    final coordinates of the bounding box and
-    exits the program
-
-    Arguments:
-        rect: Rect
-            The bounding box in use
-        outfile:
-            Name of the JSON file to write results to
-    """
-    with open(outfile, 'w+') as fp:
-        try:
-            data = json.load(fp)
-        except json.decoder.JSONDecodeError:
-            data = dict()
-        finally:
-            data['screengrab_coords'] = rect.coords()
-            fp.seek(0)
-            json.dump(data, fp, indent=4, sort_keys=True)
-            fp.truncate()
-    exit()
-
-
-def main(argv):
-    CONFIG_FILE = "../config.json"
-
+def start():
     # Set up Tkinter window
     root = tk.Tk()
     root.wait_visibility(root)
@@ -75,16 +35,13 @@ def main(argv):
     # Create Tkinter Canvas and Rect object
     c = tk.Canvas(root)
     c.pack(fill='both', expand=True)
-    rect = Rect(c, 0, 0, 0, 0, fill="blue")
+    rect = c.create_rectangle(0, 0, 0, 0, fill="blue")
 
     # Set event bindings and start Tkinter main loop
-    root.bind("<ButtonPress-1>", lambda e: _mouseDown(e, rect))
-    root.bind("<B1-Motion>", lambda e: _mouseMove(e, rect))
-    root.bind("<ButtonRelease-1>", lambda e: quit(rect, CONFIG_FILE))
-    root.bind("<Return>", lambda e: quit(rect, CONFIG_FILE))
-    root.bind("<Escape>", lambda e: e.widget.destroy())
+    root.bind("<ButtonPress-1>", lambda e: c.coords(rect, e.x_root, e.y_root, e.x_root, e.y_root))
+    root.bind("<B1-Motion>", lambda e: _mouseMove(c, rect, e.x_root, e.y_root))
+    root.bind("<ButtonRelease-1>", lambda e: e.widget.quit())
+    root.bind("<Escape>", lambda e: e.widget.quit())
     root.mainloop()
-    
 
-if __name__ == '__main__':
-    main(sys.argv[1:])
+    return c.coords(rect)
