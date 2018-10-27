@@ -50,7 +50,7 @@ def match(screenText, targetText="Fishing Bobber", threshold=5):
         line = line.split()
         for i in range(len(line)-ngram_size+1):
             ngram = " ".join(line[i:i+ngram_size])
-            if levenshtein(ngram, targetText) < threshold:
+            if levenshtein(ngram, targetText) <= threshold:
                 return True
     return False
 
