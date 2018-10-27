@@ -1,5 +1,5 @@
 import pytest
-from autofisher.fisher.fisher import match, main
+from ..fisher import match
 
 
 class TestMatch():
