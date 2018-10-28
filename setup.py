@@ -18,7 +18,7 @@ setup(
     url='https://github.com/r-best/MinecraftAutoFisher',
     author='Robert Best',
     author_email='bobbyisbest3@gmail.com',
-    license='MIT',
+    license='gpl-3.0',
     packages=find_packages(),
     install_requires=reqs,
     include_package_data=True,
