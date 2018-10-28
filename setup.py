@@ -9,16 +9,16 @@ with open('README.md', 'r') as fp:
 setup(
     name='Minecraft AutoFisher',
     version='0.1',
-    description='',
+    description='Automated fisher program for Minecraft',
     long_description=readme,
     classifiers=[
       'Programming Language :: Python :: 3.6'
     ],
-    keywords='',
+    keywords='python python3 minecraft',
     url='https://github.com/r-best/MinecraftAutoFisher',
     author='Robert Best',
-    author_email='',
-    license='',
+    author_email='bobbyisbest3@gmail.com',
+    license='MIT',
     packages=find_packages(),
     install_requires=reqs,
     include_package_data=True,
