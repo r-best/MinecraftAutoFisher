@@ -7,7 +7,7 @@ with open('README.md', 'r') as fp:
     readme = fp.read()
 
 setup(
-    name='Minecraft AutoFisher',
+    name='mc-autofisher',
     version='0.1',
     description='Automated fisher program for Minecraft',
     long_description=readme,
