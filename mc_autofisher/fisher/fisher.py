@@ -54,16 +54,9 @@ def match(screenText, targetText="Fishing Bobber", threshold=5):
                 return True
     return False
 
-
-def main(argv):
-    CONFIG_FILE = "config.json"
-    if len(argv) > 0:
-        CONFIG_FILE = argv[0]
-
-    with open(CONFIG_FILE, 'r') as fp:
-        data = json.load(fp)
-        pt.pytesseract.tesseract_path = data['tesseract_path']
-        x1, y1, x2, y2 = data['screengrab_coords']
+def start(bbox, tesspath=""):
+    if tesspath != "":
+        pt.pytesseract.tesseract_path = tesspath
 
     mouse = Controller()
     listener = Listener(on_press=_keyDown)
@@ -73,9 +66,8 @@ def main(argv):
     cast_time = time.monotonic()
     while listener.is_alive():
         # Grab portion of screen defined in config file & send it to tesseract
-        screen = ig.grab(bbox=(x1, y1, x2, y2))
+        screen = ig.grab(bbox=bbox)
         screen_text = pt.image_to_string(screen)
-        print(screen_text)
         if match(screen_text, 'Fishing Bobber') or time.monotonic() - cast_time > timeout:
             # Either fish was found or timeout was exceeded, reel in the line and cast it again
             mouse.click(Button.right, 2)
@@ -83,7 +75,3 @@ def main(argv):
         time.sleep(0.25)
 
     listener.join()
-
-
-if __name__ == '__main__':
-    main(sys.argv[1:])
