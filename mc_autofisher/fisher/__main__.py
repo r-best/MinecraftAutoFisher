@@ -9,7 +9,7 @@ if len(sys.argv) > 1:
 try:
     with open(CONFIG_FILE, 'r') as fp:
         data = json.load(fp)
-    start(data)
+    start(tuple(data['screengrab_coords']), data['tesseract_path'])
 except FileNotFoundError:
     print("ERROR: Config file '{}' does not exist, please run the screengrabber".format(CONFIG_FILE))
     exit()
