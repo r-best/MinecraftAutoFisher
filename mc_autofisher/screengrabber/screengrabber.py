@@ -55,24 +55,3 @@ def grab():
     root.mainloop()
 
     return c.coords(rect)
-
-
-def main(argv):
-    CONFIG_FILE = "config.json"
-    if len(argv) > 0:
-        CONFIG_FILE = argv[0]
-
-    coords = grab()
-    with open(CONFIG_FILE, 'r+') as fp:
-        try:
-            data = json.load(fp)
-        except json.decoder.JSONDecodeError:
-            data = dict()
-    with open(CONFIG_FILE, 'w') as fp:
-        data['screengrab_coords'] = coords
-        json.dump(data, fp, indent=4, sort_keys=True)
-        fp.truncate()
-
-
-if __name__ == '__main__':
-    main(sys.argv[1:])
