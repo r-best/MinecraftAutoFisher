@@ -1,10 +1,8 @@
-import sys
+import os
 import json
 from .screengrabber import grab
 
-CONFIG_FILE = "config.json"
-if len(sys.argv) > 1:
-    CONFIG_FILE = sys.argv[0]
+CONFIG_FILE = os.path.join(os.path.dirname(__file__), "..", "..", "config.json")
 
 coords = grab()
 data = dict()
