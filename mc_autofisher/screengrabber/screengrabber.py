@@ -36,6 +36,8 @@ def grab():
     click and drag a rectangular selection, then returns
     the coordinates of the selection
     """
+    bbox = [0, 0, 0, 0]
+
     # Set up Tkinter window
     root = tk.Tk()
     root.wait_visibility(root)
@@ -47,11 +49,16 @@ def grab():
     c.pack(fill='both', expand=True)
     rect = c.create_rectangle(0, 0, 0, 0, fill="blue")
 
+    def end():
+        nonlocal bbox
+        bbox = c.coords(rect)
+        root.destroy()
+
     # Set event bindings and start Tkinter main loop
     root.bind("<ButtonPress-1>", lambda e: c.coords(rect, e.x_root, e.y_root, e.x_root, e.y_root))
     root.bind("<B1-Motion>", lambda e: _mouseMove(c, rect, e.x_root, e.y_root))
-    root.bind("<ButtonRelease-1>", lambda e: e.widget.quit())
-    root.bind("<Escape>", lambda e: e.widget.quit())
+    root.bind("<ButtonRelease-1>", lambda e: end())
+    root.bind("<Escape>", lambda e: end())
     root.mainloop()
 
-    return c.coords(rect)
+    return bbox
