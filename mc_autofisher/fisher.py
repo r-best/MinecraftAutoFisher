@@ -54,7 +54,7 @@ def match(screenText, targetText="Fishing Bobber", threshold=5):
                 return True
     return False
 
-def start(bbox, tesspath=""):
+def start(bbox, allowed_error=5, tesspath=""):
     if tesspath != "":
         pt.pytesseract.tesseract_path = tesspath
 
@@ -68,7 +68,7 @@ def start(bbox, tesspath=""):
         # Grab portion of screen defined in config file & send it to tesseract
         screen = ig.grab(bbox=bbox)
         screen_text = pt.image_to_string(screen)
-        if match(screen_text, 'Fishing Bobber') or time.monotonic() - cast_time > timeout:
+        if match(screen_text, threshold=allowed_error) or time.monotonic() - cast_time > timeout:
             # Either fish was found or timeout was exceeded, reel in the line and cast it again
             mouse.click(Button.right, 2)
             cast_time = time.monotonic()

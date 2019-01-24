@@ -1,2 +1,2 @@
-from .fisher import fisher
-from .screengrabber import screengrabber
+from .fisher import start
+from .screengrabber import grab

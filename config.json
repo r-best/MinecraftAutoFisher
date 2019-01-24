@@ -1,9 +1,10 @@
 {
-    "tesseract_path": "\\usr\\bin\\tesseract",
-    "screengrab_coords": [
-        359,
-        267,
-        770,
-        577
-    ]
+    "allowed_levdist": 5,
+    "bbox": [
+        919.0,
+        440.0,
+        1549.0,
+        744.0
+    ],
+    "tesseract_path": "\\usr\\bin\\tesseract"
 }

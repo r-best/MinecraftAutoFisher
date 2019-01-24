@@ -1,1 +1,0 @@
-from .screengrabber import grab
