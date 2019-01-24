@@ -12,7 +12,7 @@ try:
     opts, args = getopt.getopt(sys.argv[1:], "s", ["levdist=", "tesspath=", "new-bbox"])
 except getopt.GetoptError as e:
     print(e)
-    print("Usage text here")
+    print("python -m mc-autofisher [--levdist x] [--tesspath x] [-s|--new-bbox] [...]")
     sys.exit(2)
 
 params = {
