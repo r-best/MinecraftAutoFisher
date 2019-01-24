@@ -8,8 +8,8 @@ with open('README.md', 'r') as fp:
 
 setup(
     name='mc_autofisher',
-    version='0.3',
-    description='Automated fisher program for Minecraft',
+    version='0.4',
+    description='Automated fishing program for Minecraft',
     long_description=readme,
     classifiers=[
       'Programming Language :: Python :: 3.6'
