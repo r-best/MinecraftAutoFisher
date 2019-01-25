@@ -1,5 +1,7 @@
 # MinecraftAutoFisher
 
+[![Documentation Status](https://readthedocs.org/projects/minecraftautofisher/badge/?version=latest)](https://minecraftautofisher.readthedocs.io/en/latest/?badge=latest)
+
 ## Description
 The goal of fishing in Minecraft is to cast your line and wait until the fishing bobber bobs in the water.
 If you click quickly enough when that happens, you'll reel in a fish (or some treasure!).
@@ -14,13 +16,4 @@ Requires [tesseract](https://github.com/tesseract-ocr/tesseract)
 More details to come
 
 ## Usage
-First, run `screengrabber.py`. This will open up a slightly transparent window, and you should click and drag a rectangle over
-the area the subtitles usually appear on your screen. This will tell the program where to look for the subtitles, and only
-needs to be done once.
-
-Second, run `fisher.py`, which will begin watching the part of the screen you selected for the text "Fishing Bobber splashes"
-(make sure you have your subtitles turned on in the Minecraft settings!). Then just cast your fishing rod and leave it running!
-The program will right click whenever it sees the text to reel in the fish, then right click again to recast the line, giving
-you an infinite supply of fish.
-> Note: If the program doesn't see the text for 45 seconds, it will think something is wrong and right click twice to recast
-the line, make sure Minecraft is actually on screen or your computer will just right click every 45 seconds!
+This README needs to be updated, see the [docs](https://minecraftautofisher.readthedocs.io) for usage details
