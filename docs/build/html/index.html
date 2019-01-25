@@ -52,11 +52,45 @@
 <div><div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">mc</span><span class="o">-</span><span class="n">autofisher</span> <span class="p">[</span><span class="o">--</span><span class="n">levdist</span> <span class="n">x</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tesspath</span> <span class="n">x</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="o">|--</span><span class="n">new</span><span class="o">-</span><span class="n">bbox</span><span class="p">]</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
+<dl class="docutils">
+<dt><strong>Arguments:</strong></dt>
+<dd><dl class="first last docutils">
+<dt><code class="docutils literal"><span class="pre">--levdist</span> <span class="pre">x</span></code>: Integer (default 5)</dt>
+<dd>The maximum Levenshtein distance allowed for text matching, accounts for slight
+errors in Tesseract’s text recognition, i.e. ‘Fishing Gobber’ instead of ‘Fishing Bobber’</dd>
+<dt><code class="docutils literal"><span class="pre">--tesspath</span> <span class="pre">x</span></code>: String</dt>
+<dd>The path to your Tesseract installation, usually unnecessary unless you have some special setup</dd>
+<dt><code class="docutils literal"><span class="pre">--new-bbox</span></code> or <code class="docutils literal"><span class="pre">-s</span></code></dt>
+<dd>Tells the program you want to run the screengrabber and record the new bounding box in the config
+file. The screengrabber will run by default if there is not a bounding box already recorded in the
+config file and you have not manually provided coordinates on the command line</dd>
+</dl>
+</dd>
+<dt><strong>Other Parameters:</strong></dt>
+<dd>If four flagless arguments are present they will be treated as manually-entered
+coordinates of the top left and bottom right corners of the bounding box and will take precedence
+over <code class="docutils literal"><span class="pre">--new-bbox</span></code> and the coordinates in the config file</dd>
+<dt><strong>Examples:</strong></dt>
+<dd><div class="code bash first last highlight-default"><div class="highlight"><pre><span></span>$ python -m mc-autofisher                               # Runs with parameters from config file
+
+$ python -m mc-autofisher 50 50 100 100                 # Runs with specified bounding box, all other parameters from config file
+
+$ python -m mc-autofisher --levdist 1                   # Runs with a maximum Levenshtein distance of 1
+
+$ python -m mc-autofisher --tesspath /home/Desktop      # Why would you install Tesseract on your Desktop?
+
+$ python -m mc-autofisher --new-bbox                    # Runs the screengrabber first to allow selection of a new bounding box
+</pre></div>
+</div>
+</dd>
+</dl>
 </div></blockquote>
 </div>
 <div class="section" id="module-mc_autofisher.fisher">
 <span id="mc-autofisher-fisher-module"></span><h2>mc_autofisher.fisher module<a class="headerlink" href="#module-mc_autofisher.fisher" title="Permalink to this headline">¶</a></h2>
-<p>FISHER</p>
+<p>Automates Minecraft fishing by watching a portion of the screen for the subtitle
+text “Fishing Bobber splashes”, and double clicking the right mouse button when it
+is found, allowing it to reel in and recast the line every time a fish appears.</p>
 <dl class="function">
 <dt id="mc_autofisher.fisher.match">
 <code class="descclassname">mc_autofisher.fisher.</code><code class="descname">match</code><span class="sig-paren">(</span><em>screenText</em>, <em>targetText='Fishing Bobber'</em>, <em>threshold=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_autofisher/fisher.html#match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_autofisher.fisher.match" title="Permalink to this definition">¶</a></dt>
@@ -68,13 +102,11 @@ to the target text using Levenshtein distance</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>screenText</strong> – string
-The text to search for a match in</li>
-<li><strong>targetText</strong> – string=”Fishing Bobber”
-The text to search for</li>
-<li><strong>threshold</strong> – int=5
+<li><strong>screenText</strong> (<em>str</em>) – The text to search for a match in</li>
+<li><strong>targetText</strong> (<cite>string</cite>, optional) – The text to search for, defaults to “Fishing Bobber”</li>
+<li><strong>threshold</strong> – (<cite>int</cite>, optional)
 The maximum acceptable Levenshtein distance to
-be considered a match</li>
+be considered a match, defaults to 5</li>
 </ul>
 </td>
 </tr>
@@ -108,13 +140,12 @@ the fish and recast the line. Press enter to quit.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>bbox</strong> (<em>list</em>) – A list of 4 numbers (x1, y1, x2, y2) obtained from
-the screengrabber program, where (x1, y1) is the top left corner
-of the bounding box and (x2, y2) is the lower right corner</li>
-<li><strong>allowed_error</strong> (<em>int</em>) – The margin of error (measured in Levenshtein distance)
-allowed for text matching, i.e. ‘Fishing Gobber splashes’ has an error of 1</li>
-<li><strong>tesspath</strong> (<em>str</em>) – The path to your Tesseract installation, leave blank to
-use default</li>
+<li><strong>bbox</strong> (<em>list</em>) – A list of 4 numbers (x1, y1, x2, y2) obtained from the screengrabber
+program, where (x1, y1) is the top left corner of the bounding box
+and (x2, y2) is the lower right corner</li>
+<li><strong>allowed_error</strong> (<cite>int</cite>, optional) – The margin of error (measured in Levenshtein distance) allowed for
+text matching, i.e. ‘Fishing Gobber splashes’ has an error of 1</li>
+<li><strong>tesspath</strong> (<cite>str</cite>, optional) – The path to your Tesseract installation, leave blank to use default</li>
 </ul>
 </td>
 </tr>
