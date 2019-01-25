@@ -1,3 +1,6 @@
+"""FISHER
+"""
+
 import sys
 import time
 import json
@@ -55,6 +58,20 @@ def match(screenText, targetText="Fishing Bobber", threshold=5):
     return False
 
 def start(bbox, allowed_error=5, tesspath=""):
+    """Takes in bounding box coordinates and begins watching
+    that section of the screen for the text "Fishing Bobber splashes",
+    double clicking the right mouse button when it sees it to reel in
+    the fish and recast the line. Press enter to quit.
+
+    Arguments:
+        bbox (list): A list of 4 numbers (x1, y1, x2, y2) obtained from
+            the screengrabber program, where (x1, y1) is the top left corner
+            of the bounding box and (x2, y2) is the lower right corner
+        allowed_error (int): The margin of error (measured in Levenshtein distance)
+            allowed for text matching, i.e. 'Fishing Gobber splashes' has an error of 1
+        tesspath (str): The path to your Tesseract installation, leave blank to
+            use default
+    """
     if tesspath != "":
         pt.pytesseract.tesseract_path = tesspath
 
