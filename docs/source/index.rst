@@ -6,6 +6,9 @@
 Welcome to mc-autofisher's documentation!
 =========================================
 
+.. automodule:: mc_autofisher
+
+
 mc_autofisher.fisher module
 ---------------------------
 .. automodule:: mc_autofisher.fisher
