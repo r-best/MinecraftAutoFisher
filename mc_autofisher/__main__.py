@@ -23,18 +23,18 @@ params = {
 # Process command line args and assign parameter values
 for opt, arg in opts:
     if opt == "--tesspath":
-        tesspath = arg
+        params['tesspath'] = arg
     if opt == "--levdist":
-        try: error_margin = int(arg)
+        try: params['error_margin'] = int(arg)
         except ValueError:
             print("ERROR: Allowed Levenshtein distance must be a whole number")
     if opt in ("-s", "--new-bbox"):
-        bbox = grab()
+        params['bbox'] = grab()
         try:
             with open(CONFIG_FILE, 'r') as fp:
                 temp = json.load(fp)
             with open(CONFIG_FILE, 'w+') as fp:
-                temp['bbox'] = bbox
+                temp['bbox'] = params['bbox']
                 json.dump(temp, fp, indent=4, sort_keys=True)
         except:
             print("ERROR: Unable to save new bbox to config file")
@@ -61,7 +61,7 @@ if -1 in params.values():
             # If 4 or more tagless args were provided, accept them as the bbox
             # Else get the bbox from the config file
             if len(args) >= 4:
-                try: bbox = [int(x) for x in args[:4]]
+                try: params["bbox"] = [int(x) for x in args[:4]]
                 except ValueError:
                     print("One of the provided bounding box values was not a number")
             else:
