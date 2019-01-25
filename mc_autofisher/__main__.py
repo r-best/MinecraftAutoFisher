@@ -5,7 +5,7 @@ import getopt
 from .fisher import start
 from .screengrabber import grab
 
-CONFIG_FILE = os.path.join(os.path.dirname(__file__), "..", "config.json")
+CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.json")
 
 # Read command line args
 try:
