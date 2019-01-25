@@ -20,6 +20,14 @@ params = {
     "error_margin": -1,
     "bbox": -1
 }
+
+# If 4 or more tagless args were provided, accept them as the bbox
+# Else get the bbox from the config file
+if len(args) >= 4:
+    try: params["bbox"] = [int(x) for x in args[:4]]
+    except ValueError:
+        print("One of the provided bounding box values was not a number")
+
 # Process command line args and assign parameter values
 for opt, arg in opts:
     if opt == "--tesspath":
@@ -28,7 +36,7 @@ for opt, arg in opts:
         try: params['error_margin'] = int(arg)
         except ValueError:
             print("ERROR: Allowed Levenshtein distance must be a whole number")
-    if opt in ("-s", "--new-bbox"):
+    if opt in ("-s", "--new-bbox") and params['bbox'] != -1:
         params['bbox'] = grab()
         try:
             with open(CONFIG_FILE, 'r') as fp:
@@ -58,14 +66,7 @@ if -1 in params.values():
         if params["error_margin"] == -1:
             params["error_margin"] = config["allowed_levdist"]
         if params["bbox"] == -1:
-            # If 4 or more tagless args were provided, accept them as the bbox
-            # Else get the bbox from the config file
-            if len(args) >= 4:
-                try: params["bbox"] = [int(x) for x in args[:4]]
-                except ValueError:
-                    print("One of the provided bounding box values was not a number")
-            else:
-                params["bbox"] = config["bbox"]
+            params["bbox"] = config["bbox"]
     except KeyError:
         print(f"ERROR: Please check that the config file {CONFIG_FILE} contains all required values")
 
