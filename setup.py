@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+import mc_autofisher
 
 with open('requirements.txt', 'r') as fp:
     reqs = [x.strip() for x in fp.readlines()]
@@ -8,7 +9,7 @@ with open('README.md', 'r') as fp:
 
 setup(
     name='mc_autofisher',
-    version='0.4',
+    version=mc_autofisher.__version__,
     description='Automated fishing program for Minecraft',
     long_description=readme,
     classifiers=[
@@ -16,8 +17,8 @@ setup(
     ],
     keywords='python python3 minecraft',
     url='https://github.com/r-best/MinecraftAutoFisher',
-    author='Robert Best',
-    author_email='bobbyisbest3@gmail.com',
+    author=mc_autofisher.__author__,
+    author_email=mc_autofisher.__email__,
     license='gpl-3.0',
     packages=find_packages(),
     install_requires=reqs,
