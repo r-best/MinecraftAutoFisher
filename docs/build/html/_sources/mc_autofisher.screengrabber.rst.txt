@@ -1,0 +1,7 @@
+mc\_autofisher\.screengrabber module
+====================================
+
+.. automodule:: mc_autofisher.screengrabber
+    :members:
+    :undoc-members:
+    :show-inheritance:

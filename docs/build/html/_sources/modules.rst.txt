@@ -1,0 +1,7 @@
+mc_autofisher
+=============
+
+.. toctree::
+   :maxdepth: 4
+
+   mc_autofisher

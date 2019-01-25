@@ -1,0 +1,202 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to mc-autofisher’s documentation! &#8212; mc-autofisher 0.4 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">mc-autofisher 0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-mc_autofisher">
+<span id="welcome-to-mc-autofisher-s-documentation"></span><h1>Welcome to mc-autofisher’s documentation!<a class="headerlink" href="#module-mc_autofisher" title="Permalink to this headline">¶</a></h1>
+<p>Automated Fishing Program for Minecraft</p>
+<div class="section" id="command-line-usage">
+<h2>Command Line Usage<a class="headerlink" href="#command-line-usage" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><div class="code bash highlight-default"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">mc</span><span class="o">-</span><span class="n">autofisher</span> <span class="p">[</span><span class="o">--</span><span class="n">levdist</span> <span class="n">x</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">tesspath</span> <span class="n">x</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="o">|--</span><span class="n">new</span><span class="o">-</span><span class="n">bbox</span><span class="p">]</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="module-mc_autofisher.fisher">
+<span id="mc-autofisher-fisher-module"></span><h2>mc_autofisher.fisher module<a class="headerlink" href="#module-mc_autofisher.fisher" title="Permalink to this headline">¶</a></h2>
+<p>FISHER</p>
+<dl class="function">
+<dt id="mc_autofisher.fisher.match">
+<code class="descclassname">mc_autofisher.fisher.</code><code class="descname">match</code><span class="sig-paren">(</span><em>screenText</em>, <em>targetText='Fishing Bobber'</em>, <em>threshold=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_autofisher/fisher.html#match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_autofisher.fisher.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in some text and iterates through it line by line,
+checking to see if any of the lines contain something similar
+to the target text using Levenshtein distance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>screenText</strong> – string
+The text to search for a match in</li>
+<li><strong>targetText</strong> – string=”Fishing Bobber”
+The text to search for</li>
+<li><strong>threshold</strong> – int=5
+The maximum acceptable Levenshtein distance to
+be considered a match</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if a match was found, False otherwise</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;Fishing Bobber&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;Fishing Gobber&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;Fishing&quot;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;Some text Fishing Bobber some more text&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="mc_autofisher.fisher.start">
+<code class="descclassname">mc_autofisher.fisher.</code><code class="descname">start</code><span class="sig-paren">(</span><em>bbox</em>, <em>allowed_error=5</em>, <em>tesspath=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_autofisher/fisher.html#start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_autofisher.fisher.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in bounding box coordinates and begins watching
+that section of the screen for the text “Fishing Bobber splashes”,
+double clicking the right mouse button when it sees it to reel in
+the fish and recast the line. Press enter to quit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>bbox</strong> (<em>list</em>) – A list of 4 numbers (x1, y1, x2, y2) obtained from
+the screengrabber program, where (x1, y1) is the top left corner
+of the bounding box and (x2, y2) is the lower right corner</li>
+<li><strong>allowed_error</strong> (<em>int</em>) – The margin of error (measured in Levenshtein distance)
+allowed for text matching, i.e. ‘Fishing Gobber splashes’ has an error of 1</li>
+<li><strong>tesspath</strong> (<em>str</em>) – The path to your Tesseract installation, leave blank to
+use default</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mc_autofisher.screengrabber">
+<span id="mc-autofisher-screengrabber-module"></span><h2>mc_autofisher.screengrabber module<a class="headerlink" href="#module-mc_autofisher.screengrabber" title="Permalink to this headline">¶</a></h2>
+<p>Allows the user to select an area of the screen that the autofisher
+will watch for subtitles. When the <cite>grab()</cite> method is called, it will
+open a Tkinter window where the user can click and drag a rectangular
+area whose coordinates will then be returned</p>
+<dl class="function">
+<dt id="mc_autofisher.screengrabber.grab">
+<code class="descclassname">mc_autofisher.screengrabber.</code><code class="descname">grab</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mc_autofisher/screengrabber.html#grab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mc_autofisher.screengrabber.grab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a Tkinter window and allows the user to
+click and drag a rectangular selection, then returns
+the coordinates of the selection</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of 4 numbers (x1, y1, x2, y2), where
+(x1, y1) is the top left corner and (x2, y2)
+is the lower right corner</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to mc-autofisher’s documentation!</a><ul>
+<li><a class="reference internal" href="#command-line-usage">Command Line Usage</a></li>
+<li><a class="reference internal" href="#module-mc_autofisher.fisher">mc_autofisher.fisher module</a></li>
+<li><a class="reference internal" href="#module-mc_autofisher.screengrabber">mc_autofisher.screengrabber module</a></li>
+</ul>
+</li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">mc-autofisher 0.4 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Robert Best.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

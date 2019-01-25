@@ -1,0 +1,7 @@
+mc\_autofisher\.fisher module
+=============================
+
+.. automodule:: mc_autofisher.fisher
+    :members:
+    :undoc-members:
+    :show-inheritance:

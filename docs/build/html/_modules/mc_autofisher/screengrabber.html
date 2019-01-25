@@ -1,0 +1,150 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>mc_autofisher.screengrabber &#8212; mc-autofisher 0.4 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mc-autofisher 0.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mc_autofisher.screengrabber</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Allows the user to select an area of the screen that the autofisher</span>
+<span class="sd">will watch for subtitles. When the `grab()` method is called, it will</span>
+<span class="sd">open a Tkinter window where the user can click and drag a rectangular</span>
+<span class="sd">area whose coordinates will then be returned</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">tkinter</span> <span class="k">as</span> <span class="nn">tk</span>
+
+
+<span class="k">def</span> <span class="nf">_mouseMove</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Moves the lower right corner of a rectangle on</span>
+<span class="sd">    a Tkinter Canvas to the given (x, y)-coordinates,</span>
+<span class="sd">    effectively stretching the rectangle</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        c (Tkinter.Canvas): Any Tkinter Canvas object</span>
+<span class="sd">        rect (int): The identifier of a rectangle on the canvas,</span>
+<span class="sd">            returned by canvas.create_rectangle</span>
+<span class="sd">        x (int): Destination x-coordinate</span>
+<span class="sd">        y (int): Destination y-coordinate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">coords</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">coords</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="grab"><a class="viewcode-back" href="../../index.html#mc_autofisher.screengrabber.grab">[docs]</a><span class="k">def</span> <span class="nf">grab</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Opens a Tkinter window and allows the user to</span>
+<span class="sd">    click and drag a rectangular selection, then returns</span>
+<span class="sd">    the coordinates of the selection</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of 4 numbers (x1, y1, x2, y2), where</span>
+<span class="sd">        (x1, y1) is the top left corner and (x2, y2)</span>
+<span class="sd">        is the lower right corner</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Set up Tkinter window</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">wait_visibility</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">attributes</span><span class="p">(</span><span class="s1">&#39;-alpha&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">attributes</span><span class="p">(</span><span class="s1">&#39;-fullscreen&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create Tkinter Canvas and Rect object</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Canvas</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">rect</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">create_rectangle</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">end</span><span class="p">():</span>
+        <span class="k">nonlocal</span> <span class="n">bbox</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">coords</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+
+    <span class="c1"># Set event bindings and start Tkinter main loop</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;ButtonPress-1&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">coords</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">x_root</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">y_root</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">x_root</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">y_root</span><span class="p">))</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;B1-Motion&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">_mouseMove</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">x_root</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">y_root</span><span class="p">))</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;ButtonRelease-1&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">end</span><span class="p">())</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Escape&gt;&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">end</span><span class="p">())</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">bbox</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mc-autofisher 0.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Robert Best.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

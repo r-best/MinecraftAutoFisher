@@ -1,0 +1,181 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>mc_autofisher.fisher &#8212; mc-autofisher 0.4 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mc-autofisher 0.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for mc_autofisher.fisher</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;FISHER</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">pyscreenshot</span> <span class="k">as</span> <span class="nn">ig</span>
+<span class="kn">import</span> <span class="nn">pytesseract</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="kn">from</span> <span class="nn">pynput.keyboard</span> <span class="k">import</span> <span class="n">Key</span><span class="p">,</span> <span class="n">Listener</span>
+<span class="kn">from</span> <span class="nn">pynput.mouse</span> <span class="k">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Controller</span>
+<span class="kn">from</span> <span class="nn">Levenshtein._levenshtein</span> <span class="k">import</span> <span class="n">distance</span> <span class="k">as</span> <span class="n">levenshtein</span>
+
+
+<div class="viewcode-block" id="_keyDown"><a class="viewcode-back" href="../../index.html#mc_autofisher.fisher._keyDown">[docs]</a><span class="k">def</span> <span class="nf">_keyDown</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Callback for keyboard listener, closes</span>
+<span class="sd">    the listener if the Enter key is pressed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">e</span> <span class="o">==</span> <span class="n">Key</span><span class="o">.</span><span class="n">enter</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Exiting&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="match"><a class="viewcode-back" href="../../index.html#mc_autofisher.fisher.match">[docs]</a><span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="n">screenText</span><span class="p">,</span> <span class="n">targetText</span><span class="o">=</span><span class="s2">&quot;Fishing Bobber&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes in some text and iterates through it line by line,</span>
+<span class="sd">    checking to see if any of the lines contain something similar</span>
+<span class="sd">    to the target text using Levenshtein distance</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        screenText: string</span>
+<span class="sd">            The text to search for a match in</span>
+<span class="sd">        targetText: string=&quot;Fishing Bobber&quot;</span>
+<span class="sd">            The text to search for</span>
+<span class="sd">        threshold: int=5</span>
+<span class="sd">            The maximum acceptable Levenshtein distance to</span>
+<span class="sd">            be considered a match</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if a match was found, False otherwise</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; match(&quot;Fishing Bobber&quot;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; match(&quot;Fishing Gobber&quot;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; match(&quot;Fishing&quot;)</span>
+<span class="sd">        False </span>
+<span class="sd">        &gt;&gt;&gt; match(&quot;Some text Fishing Bobber some more text&quot;)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ngram_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">targetText</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">screenText</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">-</span><span class="n">ngram_size</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">ngram</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">ngram_size</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">ngram</span><span class="p">,</span> <span class="n">targetText</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="start"><a class="viewcode-back" href="../../index.html#mc_autofisher.fisher.start">[docs]</a><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">allowed_error</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">tesspath</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes in bounding box coordinates and begins watching</span>
+<span class="sd">    that section of the screen for the text &quot;Fishing Bobber splashes&quot;,</span>
+<span class="sd">    double clicking the right mouse button when it sees it to reel in</span>
+<span class="sd">    the fish and recast the line. Press enter to quit.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        bbox (list): A list of 4 numbers (x1, y1, x2, y2) obtained from</span>
+<span class="sd">            the screengrabber program, where (x1, y1) is the top left corner</span>
+<span class="sd">            of the bounding box and (x2, y2) is the lower right corner</span>
+<span class="sd">        allowed_error (int): The margin of error (measured in Levenshtein distance)</span>
+<span class="sd">            allowed for text matching, i.e. &#39;Fishing Gobber splashes&#39; has an error of 1</span>
+<span class="sd">        tesspath (str): The path to your Tesseract installation, leave blank to</span>
+<span class="sd">            use default</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tesspath</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">pt</span><span class="o">.</span><span class="n">pytesseract</span><span class="o">.</span><span class="n">tesseract_path</span> <span class="o">=</span> <span class="n">tesspath</span>
+
+    <span class="n">mouse</span> <span class="o">=</span> <span class="n">Controller</span><span class="p">()</span>
+    <span class="n">listener</span> <span class="o">=</span> <span class="n">Listener</span><span class="p">(</span><span class="n">on_press</span><span class="o">=</span><span class="n">_keyDown</span><span class="p">)</span>
+    <span class="n">listener</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="n">timeout</span> <span class="o">=</span> <span class="mi">45</span> <span class="c1"># Fish always appears within 45 seconds, if we wait longer than this then recast the line</span>
+    <span class="n">cast_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">listener</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+        <span class="c1"># Grab portion of screen defined in config file &amp; send it to tesseract</span>
+        <span class="n">screen</span> <span class="o">=</span> <span class="n">ig</span><span class="o">.</span><span class="n">grab</span><span class="p">(</span><span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">)</span>
+        <span class="n">screen_text</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">image_to_string</span><span class="p">(</span><span class="n">screen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">(</span><span class="n">screen_text</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">allowed_error</span><span class="p">)</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">-</span> <span class="n">cast_time</span> <span class="o">&gt;</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="c1"># Either fish was found or timeout was exceeded, reel in the line and cast it again</span>
+            <span class="n">mouse</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="n">Button</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">cast_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+
+    <span class="n">listener</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">mc-autofisher 0.4 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Robert Best.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

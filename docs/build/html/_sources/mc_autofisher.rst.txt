@@ -1,0 +1,18 @@
+mc\_autofisher package
+======================
+
+Submodules
+----------
+
+.. toctree::
+
+   mc_autofisher.fisher
+   mc_autofisher.screengrabber
+
+Module contents
+---------------
+
+.. automodule:: mc_autofisher
+    :members:
+    :undoc-members:
+    :show-inheritance:
