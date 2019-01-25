@@ -21,8 +21,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
-import mc_autofisher
-
 
 if os.environ.get('READTHEDOCS'):
     from unittest.mock import MagicMock
@@ -34,6 +32,9 @@ if os.environ.get('READTHEDOCS'):
 
     MOCK_MODULES = ['pynput', 'pynput.keyboard', 'pynput.mouse']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+
+import mc_autofisher
 
 
 # -- General configuration ------------------------------------------------
