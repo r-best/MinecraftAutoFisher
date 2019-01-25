@@ -30,7 +30,7 @@ if os.environ.get('READTHEDOCS'):
         def __getattr__(cls, name):
             return MagicMock()
 
-    MOCK_MODULES = ['pynput']
+    MOCK_MODULES = ['pynput', 'pynput.keyboard', 'pynput.mouse']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
