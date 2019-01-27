@@ -1,10 +1,4 @@
 {
     "allowed_levdist": 5,
-    "bbox": [
-        919.0,
-        440.0,
-        1549.0,
-        744.0
-    ],
     "tesseract_path": "\\usr\\bin\\tesseract"
 }

@@ -38,4 +38,4 @@ Command Line Usage
 """
 __author__ = "Robert Best"
 __email__  = "bobbyisbest3@gmail.com"
-__version__= "1.1.1"
+__version__= "1.2.0"
