@@ -36,9 +36,6 @@ Command Line Usage
 
             $ python -m mc-autofisher --new-bbox                    # Runs the screengrabber first to allow selection of a new bounding box
 """
-from .fisher import start
-from .screengrabber import grab
-
 __author__ = "Robert Best"
 __email__  = "bobbyisbest3@gmail.com"
 __version__= "1.1.1"
