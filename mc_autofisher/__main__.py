@@ -36,7 +36,7 @@ for opt, arg in opts:
         try: params['error_margin'] = int(arg)
         except ValueError:
             print("ERROR: Allowed Levenshtein distance must be a whole number")
-    if opt in ("-s", "--new-bbox") and params['bbox'] != -1:
+    if opt in ("-s", "--new-bbox") and params['bbox'] == -1:
         params['bbox'] = grab()
         try:
             with open(CONFIG_FILE, 'r') as fp:
