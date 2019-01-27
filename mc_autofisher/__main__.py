@@ -69,6 +69,7 @@ if -1 in params.values():
             params["bbox"] = config["bbox"]
     except KeyError:
         print(f"ERROR: Please check that the config file {CONFIG_FILE} contains all required values")
+        exit()
 
 # Start the fisher
 start(params["bbox"],
