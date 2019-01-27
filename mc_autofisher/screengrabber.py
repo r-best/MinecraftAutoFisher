@@ -4,6 +4,7 @@ will watch for subtitles. When the `grab()` method is called, it will
 open a Tkinter window where the user can click and drag a rectangular
 area whose coordinates will then be returned
 """
+import os
 import sys
 import json
 import tkinter as tk
@@ -40,6 +41,12 @@ def grab():
             (x1, y1) is the top left corner and (x2, y2)
             is the lower right corner
     """
+    # If running on Windows, need to let it know this is a "DPI-aware program"
+    # so that the bbox coordinates aren't scaled and messed up
+    if os.name == 'nt':
+        import ctypes
+        ctypes.windll.shcore.SetProcessDpiAwareness(ctypes.c_int(1))
+
     bbox = [0, 0, 0, 0]
 
     # Set up Tkinter window
